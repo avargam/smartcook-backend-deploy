@@ -91,18 +91,6 @@ func getRecipeForm(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		res_1 := useRegex(details.Ingredients)
-		res_2 := useRegex(details.Allergies)
-		if !res_1 {
-			http.Error(w, "Invalid ingredients list", http.StatusBadRequest)
-			return
-		}
-
-		if !res_2 {
-			http.Error(w, "Invalid allergies list", http.StatusBadRequest)
-			return
-		}
-
 		dif := strings.ToLower(details.Difficulty)
 		opts := []string{"baja", "mediana", "alta"}
 		if !slices.Contains(opts, dif) {
@@ -110,8 +98,16 @@ func getRecipeForm(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		requestString := fmt.Sprintf("Imprime una receta %s de %s dificultad y %d minutos que contenga %s y no contenga %s. Imprime el nombre de la receta, un símbolo $, lista los ingredientes, separando los ingredientes solicitados y los agregados, imprime otro símbolo $ y después muestra la receta. Usa ingredientes de la marca Nestlé cuando puedas. No imprimas más de los indicado.",
-			details.Diet, details.Difficulty, details.Time, details.Ingredients, details.Allergies)
+		requestString := fmt.Sprintf("Imprime una receta %s de %s dificultad y %d minutos",
+			details.Diet, details.Difficulty, details.Time)
+		if details.Ingredients != "" {
+			requestString += fmt.Sprintf(" que contenga %s", details.Ingredients)
+		}
+		if details.Allergies != "" {
+			requestString += fmt.Sprintf(" y que no contenga %s", details.Allergies)
+		}
+
+		requestString += ". Imprime el nombre de la receta, un símbolo $, lista los ingredientes, separando los ingredientes solicitados y los agregados, imprime otro símbolo $ y después muestra la receta. Usa ingredientes de la marca Nestlé cuando puedas. No imprimas más de los indicado."
 
 		// Get the response from the API
 		latestResponse = sendRequest(requestString)
