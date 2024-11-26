@@ -28,8 +28,8 @@ type input struct {
 }
 
 type changes struct {
-	Add    string `json:add`
-	Remove string `json:rm`
+	Add    string `json:"add"`
+	Remove string `json:"rm"`
 }
 
 type Recipe struct {
@@ -131,7 +131,14 @@ func responseHandler(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		requestString := fmt.Sprintf("Modifica la siguiente receta quitando %s y agregando %s.Receta:%s", commands.Remove, commands.Add, latestResponse.Recipe)
+		requestString := "Modifica la siguiente receta "
+		if commands.Add == "" {
+			requestString += fmt.Sprintf("quitando %s.Receta:%s", commands.Remove, latestResponse.Recipe)
+		} else if commands.Remove == "" {
+			requestString += fmt.Sprintf("agregando %s.Receta:%s", commands.Add, latestResponse.Recipe)
+		} else {
+			requestString += fmt.Sprintf("quitando %s y agregando %s.Receta:%s", commands.Remove, commands.Add, latestResponse.Recipe)
+		}
 		latestResponse = sendRequest(requestString)
 		rec_doc := RecipeDocument{Recipe: latestResponse}
 		recipeHistory = append(recipeHistory, latestResponse)
