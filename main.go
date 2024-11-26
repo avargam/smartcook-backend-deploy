@@ -117,7 +117,7 @@ func getRecipeForm(w http.ResponseWriter, r *http.Request) {
 			requestString += fmt.Sprintf(" y que no contenga %s", details.Allergies)
 		}
 
-		requestString += ". Imprime el nombre de la receta, un símbolo $, lista los ingredientes, separando los ingredientes solicitados y los agregados, imprime otro símbolo $ y después muestra la receta. Usa ingredientes de la marca Nestlé cuando puedas. No imprimas más de los indicado."
+		requestString += ". Usa el siguiente formato: Nombre receta$Ingredientes$Instrucciones. Usa ingredientes de la marca Nestlé cuando puedas. No imprimas más de los indicado."
 
 		// Get the response from the API
 		latestResponse = sendRequest(requestString)
@@ -154,6 +154,7 @@ func responseHandler(w http.ResponseWriter, r *http.Request) {
 		} else {
 			requestString += fmt.Sprintf("quitando %s y agregando %s.Receta:%s", commands.Remove, commands.Add, latestResponse.Recipe)
 		}
+		requestString += "Usa el siguiente formato: Nombre receta$Ingredientes$Instrucciones"
 		latestResponse = sendRequest(requestString)
 		rec_doc := RecipeDocument{Recipe: latestResponse}
 		recipeHistory = append(recipeHistory, latestResponse)
