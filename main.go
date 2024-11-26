@@ -56,6 +56,8 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 
 func enableCors(w *http.ResponseWriter) {
 	(*w).Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
+	(*w).Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+	(*w).Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, mode")
 }
 
 func historyHandler(w http.ResponseWriter, r *http.Request) {
@@ -128,6 +130,11 @@ func getRecipeForm(w http.ResponseWriter, r *http.Request) {
 
 func responseHandler(w http.ResponseWriter, r *http.Request) {
 	//tmpl := template.Must(template.ParseFiles("forms.html"))
+	enableCors(&w)
+	if r.Method == http.MethodOptions {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
 	if r.Method == http.MethodGet {
 		rec_doc := RecipeDocument{Recipe: latestResponse}
 		json.NewEncoder(w).Encode(rec_doc)
