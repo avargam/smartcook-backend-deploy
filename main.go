@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"regexp"
 	"slices"
 	"strings"
 	"text/template"
@@ -55,7 +54,16 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/form", http.StatusSeeOther)
 }
 
+func enableCors(w *http.ResponseWriter) {
+	(*w).Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
+}
+
 func historyHandler(w http.ResponseWriter, r *http.Request) {
+	enableCors(&w)
+	if r.Method == http.MethodOptions {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
 	res := RecipeHistoryDocument{}
 	if len(recipeHistory) >= 3 {
 		recipeNames := []string{}
@@ -71,12 +79,12 @@ func historyHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(res)
 }
 
-func useRegex(s string) bool {
-	re := regexp.MustCompile(`(?i)(?:[A-Za-z]+,?)+`)
-	return re.MatchString(s)
-}
-
 func getRecipeForm(w http.ResponseWriter, r *http.Request) {
+	enableCors(&w)
+	if r.Method == http.MethodOptions {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
 	if r.Method == http.MethodGet {
 		tmpl := template.Must(template.ParseFiles("forms.html"))
 		tmpl.Execute(w, struct{ Success bool }{false})
