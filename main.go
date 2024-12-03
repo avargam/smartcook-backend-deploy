@@ -14,7 +14,7 @@ import (
 
 const (
 	apiEndpoint = "https://api.openai.com/v1/chat/completions"
-	apiKey      = "-"
+	apiKey      = ""
 )
 
 type input struct {
@@ -108,8 +108,8 @@ func getRecipeForm(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		requestString := fmt.Sprintf("Imprime una receta %s de %s dificultad y %d minutos",
-			details.Diet, details.Difficulty, details.Time)
+		requestString := fmt.Sprintf("Imprime una receta inspirada en la cocina %s, que sea %s, de %s dificultad y %d minutos",
+			details.Cuisine, details.Diet, details.Difficulty, details.Time)
 		if details.Ingredients != "" {
 			requestString += fmt.Sprintf(" que contenga %s", details.Ingredients)
 		}
@@ -154,7 +154,7 @@ func responseHandler(w http.ResponseWriter, r *http.Request) {
 		} else {
 			requestString += fmt.Sprintf("quitando %s y agregando %s.Receta:%s", commands.Remove, commands.Add, latestResponse.Recipe)
 		}
-		requestString += "Usa el siguiente formato: Nombre receta$Ingredientes$Instrucciones"
+		requestString += "Usa el siguiente formato: Nombre receta$Ingredientes$Instrucciones.Ejemplo: Sopa de tomate$1 tomate, 1 taza de agua$Mezclar tomate con agua y calentar. No imprimas más de los indicado."
 		latestResponse = sendRequest(requestString)
 		rec_doc := RecipeDocument{Recipe: latestResponse}
 		recipeHistory = append(recipeHistory, latestResponse)
