@@ -8,6 +8,7 @@ import (
 	"slices"
 	"strings"
 	"text/template"
+	"github.com/rs/cors"
 
 	"github.com/go-resty/resty/v2"
 )
@@ -61,13 +62,11 @@ func enableCors(w *http.ResponseWriter, r *http.Request) {
 }
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w, r)
 	http.Redirect(w, r, "/form", http.StatusSeeOther)
 }
 
 
 func historyHandler(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w, r)
 	if r.Method == http.MethodOptions {
 		w.WriteHeader(http.StatusOK)
 		return
@@ -88,7 +87,6 @@ func historyHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func getRecipeForm(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w, r)
 	if r.Method == http.MethodOptions {
 		w.WriteHeader(http.StatusOK)
 		return
@@ -136,7 +134,6 @@ func getRecipeForm(w http.ResponseWriter, r *http.Request) {
 
 func responseHandler(w http.ResponseWriter, r *http.Request) {
 	//tmpl := template.Must(template.ParseFiles("forms.html"))
-	enableCors(&w, r)
 	if r.Method == http.MethodOptions {
 		w.WriteHeader(http.StatusOK)
 		return
@@ -215,9 +212,18 @@ func sendRequest(requestString string) Recipe {
 
 func main() {
 	mux := http.NewServeMux()
+
 	mux.HandleFunc("/", indexHandler)
 	mux.HandleFunc("/form", getRecipeForm)
 	mux.HandleFunc("/recipe", responseHandler)
 	mux.HandleFunc("/history", historyHandler)
-	log.Fatal(http.ListenAndServe(":8080", mux))
+
+	handler := cors.New(cors.Options{
+		AllowedOrigins:   []string{"*"},
+		AllowedMethods:   []string{"GET", "POST", "OPTIONS"},
+		AllowedHeaders:   []string{"Content-Type", "Authorization"},
+		AllowCredentials: true,
+	}).Handler(mux)
+
+	log.Fatal(http.ListenAndServe(":8080", handler))
 }
