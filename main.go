@@ -58,7 +58,7 @@ func enableCors(w *http.ResponseWriter) {
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
-	if (*req).Method == "OPTIONS" {
+	if (*r).Method == "OPTIONS" {
 		return
 	}
 	http.Redirect(w, r, "/form", http.StatusSeeOther)
