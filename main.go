@@ -56,8 +56,8 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 
 func enableCors(w *http.ResponseWriter) {
 	(*w).Header().Set("Access-Control-Allow-Origin", "https://smartcook-frontend.onrender.com")
-	(*w).Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-	(*w).Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, mode")
+	(*w).Header().Set("Access-Control-Allow-Methods", "GET", "POST", "OPTIONS")
+	(*w).Header().Set("Access-Control-Allow-Headers", "Content-Type", "Authorization", "mode")
 }
 
 func historyHandler(w http.ResponseWriter, r *http.Request) {
