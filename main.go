@@ -54,13 +54,14 @@ func enableCors(w *http.ResponseWriter, r *http.Request) {
 	(*w).Header().Set("Access-Control-Allow-Origin", "*")
 	(*w).Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
 	(*w).Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, mode")
+
+	if r.Method == "OPTIONS" {
+		return
+	}
 }
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w, r)
-	if (*r).Method == "OPTIONS" {
-		return
-	}
 	http.Redirect(w, r, "/form", http.StatusSeeOther)
 }
 
