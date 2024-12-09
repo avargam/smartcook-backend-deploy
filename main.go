@@ -50,15 +50,20 @@ var recipeHistory []Recipe
 
 var latestResponse Recipe
 
-func indexHandler(w http.ResponseWriter, r *http.Request) {
-	http.Redirect(w, r, "/form", http.StatusSeeOther)
-}
-
 func enableCors(w *http.ResponseWriter) {
 	(*w).Header().Set("Access-Control-Allow-Origin", "https://smartcook-frontend.onrender.com/")
 	(*w).Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
 	(*w).Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, mode")
 }
+
+func indexHandler(w http.ResponseWriter, r *http.Request) {
+	enableCors(&w)
+	if (*req).Method == "OPTIONS" {
+		return
+	}
+	http.Redirect(w, r, "/form", http.StatusSeeOther)
+}
+
 
 func historyHandler(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
