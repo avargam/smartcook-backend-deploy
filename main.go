@@ -213,5 +213,5 @@ func main() {
 	mux.HandleFunc("/form", getRecipeForm)
 	mux.HandleFunc("/recipe", responseHandler)
 	mux.HandleFunc("/history", historyHandler)
-	log.Fatal(http.ListenAndServe(":8080", mux))
+	log.Fatal(http.ListenAndServe(":", mux))
 }
